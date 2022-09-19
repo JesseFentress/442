@@ -90,7 +90,7 @@ class BoardState:
         return self.manhattan_distance < other.manhattan_distance
 
     def __repr__(self):
-        return self.manhattan_distance
+        return str(self.board)
 
     def __str__(self):
         return str(self.board)
@@ -106,7 +106,7 @@ class BoardState:
     
 
 def a_star_solve(start_state):
-    used_board = {}
+    used_board = []
     priority_queue = PriorityQueue()
     s = BoardState(start_state)
     priority_queue.put(s)
@@ -120,39 +120,40 @@ def a_star_solve(start_state):
             if current.zero[0] - 1 >= 0:
                 temp_board = current.swap([current.zero[0] - 1, current.zero[1]])
                 new_board = BoardState(temp_board)
-                print(new_board.hash, new_board.board)
-                if new_board.hash not in used_board:
+                #print(new_board.hash, new_board.board)
+                if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board[new_board] = new_board
-                    print(new_board.manhattan_distance)
+                    used_board.append(new_board)
+                    #print(new_board.manhattan_distance)
                 #print(new_board.board, 'up')
             if current.zero[0] + 1 < len(current.board):
                 temp_board = current.swap([current.zero[0] + 1, current.zero[1]])
                 new_board = BoardState(temp_board)
-                print(new_board.hash, new_board.board)
-                if new_board.hash not in used_board:
+                #print(new_board.hash, new_board.board)
+                if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board[new_board] = new_board
-                    print(new_board.manhattan_distance)
+                    used_board.append(new_board)
+                    #print(new_board.manhattan_distance)
                 #print(new_board.board, 'down')
             if current.zero[1] - 1 >= 0:
                 temp_board = current.swap([current.zero[0], current.zero[1] - 1])
                 new_board = BoardState(temp_board)
-                print(new_board.hash, new_board.board)
-                if new_board.hash not in used_board:
+                #print(new_board.hash, new_board.board)
+                if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board[new_board] = new_board
-                    print(new_board.manhattan_distance)
+                    used_board.append(new_board)
+                    #print(new_board.manhattan_distance)
                 #print(new_board.board, 'left')
             if current.zero[1] + 1 < len(current.board):
                 temp_board = current.swap([current.zero[0], current.zero[1] + 1])
                 new_board = BoardState(temp_board)
-                print(new_board.hash, new_board.board)
-                if new_board.hash not in used_board:
+                #print(new_board.hash, new_board.board)
+                if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board[new_board] = new_board
-                    print(new_board.manhattan_distance)
+                    used_board.append(new_board)
+                    #print(new_board.manhattan_distance)
                 #print(new_board.board, 'right')
+            print(used_board)
 
 p = BoardState(input)
 q = BoardState(desired_output)
@@ -162,4 +163,4 @@ print(p.zero)
 print(q.hash)
 print(q.zero)
 print(q.manhattan_distance)
-a_star_solve(input)
+a_star_solve(input2)
