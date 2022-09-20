@@ -8,6 +8,13 @@ input = [
     [13, 14, 15, 12]
 ]
 
+input3 = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 0, 11],
+    [13, 14, 15, 12]
+]
+
 input2 = [
     [1, 3, 6, 4],
     [5, 2, 0, 8],
@@ -24,8 +31,9 @@ desired_output = [
 
 class BoardState:
     
-    def __init__(self, board):
+    def __init__(self, board, moves):
         self.board = board
+        self.moves = moves
         self.manhattan_distance = self.manhattan()
         self.zero = self.find_zero()
         self.hash = self.hash_board()
@@ -68,12 +76,24 @@ class BoardState:
                 idx += self.board[i][j] * (i + len(self.board) * j)
         return idx
 
-    def swap(self, new_position):
+    def swap(self, x, y):
         copy = cp.deepcopy(self.board)
-        if new_position[0] < len(copy) and new_position[1] < len(copy[0]):
-            copy[self.zero[0]][self.zero[1]] = copy[new_position[0]][new_position[1]]
-            copy[new_position[0]][new_position[1]] = 0
+        if x < len(copy) and y < len(copy[0]):
+            copy[self.zero[0]][self.zero[1]] = copy[x][y]
+            copy[x][y] = 0
         return copy
+
+    def generate_successors(self):
+        successors = []
+        if self.zero[0] - 1 >= 0:
+            successors.append(self.swap(self.zero[0] - 1, self.zero[1]))
+        if self.zero[0] + 1 < len(self.board):
+            successors.append(self.swap(self.zero[0] + 1, self.zero[1]))
+        if self.zero[1] - 1 >= 0:
+            successors.append(self.swap(self.zero[0], self.zero[1] - 1))
+        if self.zero[1] + 1 < len(self.board):
+            successors.append(self.swap(self.zero[0], self.zero[1] + 1))
+        return successors
 
     def print(self):
         for i in range(len(self.board)):
@@ -81,13 +101,19 @@ class BoardState:
                 print(input[i][j])
 
     def  __eq__(self, other):
-        return self.manhattan_distance == other.manhattan_distance
+        return self.manhattan_distance + self.moves == other.manhattan_distance + other.moves and self.board == other.board
     
     def  __gt__(self, other):
-        return self.manhattan_distance > other.manhattan_distance
+        return self.manhattan_distance + self.moves > other.manhattan_distance + other.moves
+    
+    def __ge__(self, other):
+        return self.manhattan_distance + self.moves >= other.manhattan_distance + other.moves
+    
+    def __le__(self, other):
+        return self.manhattan_distance + self.moves <= other.manhattan_distance + other.moves
     
     def __lt__(self, other):
-        return self.manhattan_distance < other.manhattan_distance
+        return self.manhattan_distance + self.moves < other.manhattan_distance + other.moves 
 
     def __repr__(self):
         return str(self.board)
@@ -113,6 +139,8 @@ def a_star_solve(start_state):
     while not priority_queue.empty():
         current = priority_queue.get()
         print('current', current, current.manhattan_distance)
+        used_board.append(current)
+        print(used_board, "sd")
         if current.manhattan_distance == 0:
             print(current, 'WINNER')
             return
@@ -123,7 +151,9 @@ def a_star_solve(start_state):
                 #print(new_board.hash, new_board.board)
                 if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board.append(new_board)
+                    
+                else: 
+                    print(new_board.manhattan_distance, "up")
                     #print(new_board.manhattan_distance)
                 #print(new_board.board, 'up')
             if current.zero[0] + 1 < len(current.board):
@@ -132,8 +162,10 @@ def a_star_solve(start_state):
                 #print(new_board.hash, new_board.board)
                 if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board.append(new_board)
-                    #print(new_board.manhattan_distance)
+                    
+                    print(new_board.manhattan_distance)
+                else: 
+                    print(new_board.manhattan_distance, "down")
                 #print(new_board.board, 'down')
             if current.zero[1] - 1 >= 0:
                 temp_board = current.swap([current.zero[0], current.zero[1] - 1])
@@ -141,7 +173,9 @@ def a_star_solve(start_state):
                 #print(new_board.hash, new_board.board)
                 if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board.append(new_board)
+                    
+                else: 
+                    print(new_board.manhattan_distance, "left")
                     #print(new_board.manhattan_distance)
                 #print(new_board.board, 'left')
             if current.zero[1] + 1 < len(current.board):
@@ -150,17 +184,47 @@ def a_star_solve(start_state):
                 #print(new_board.hash, new_board.board)
                 if new_board not in used_board:
                     priority_queue.put(new_board)
-                    used_board.append(new_board)
+                    
+                else: 
+                    print(new_board.manhattan_distance, new_board.board, "right")
                     #print(new_board.manhattan_distance)
                 #print(new_board.board, 'right')
-            print(used_board)
+            #print(used_board, "used")
+            print(used_board, "re")
 
-p = BoardState(input)
-q = BoardState(desired_output)
+def a(start, end):
+    open = []
+    closed = []
+    open.append(start)
+    pq = PriorityQueue()
+    pq.put(BoardState(start, 0))
+    while not pq.empty():
+        n = pq.get()
+        if n.board == end:
+            print("Winner", n.moves)
+            return
+        closed.append(n.board)
+        successors = n.generate_successors()
+        for child in successors:
+            if child not in open and child not in closed:
+                pq.put(BoardState(child, n.moves + 1))
+                open.append(child)
+            if child in closed and child in open:
+                pass
+    print("Empty")
+    return
+
+
+
+p = BoardState(input, 0)
+q = BoardState(desired_output, 0)
+t = BoardState(input3, 0)
 print(p.hash)
 print(p.manhattan_distance)
 print(p.zero)
 print(q.hash)
 print(q.zero)
 print(q.manhattan_distance)
-a_star_solve(input2)
+print(t.generate_successors())
+#a_star_solve(input)
+a(input, desired_output)
