@@ -50,18 +50,18 @@ class BoardState:
             15: [3,2],
             0: [3, 3]
         }
-        for i in range(len(self.board)):
-            for j in range(len(self.board[i])):
+        for x in range(len(self.board)):
+            for y in range(len(self.board[x])):
                 # Finding manhattan distance can be done by summing the distance (the difference) 
                 # from the current position of a number and its goal position (x and y position)
-                manhattan_distance = manhattan_distance + (abs(goal_state[self.board[i][j]][0] - i) + (abs(goal_state[self.board[i][j]][1] - j)))
+                manhattan_distance = manhattan_distance + (abs(goal_state[self.board[x][y]][0] - y) + (abs(goal_state[self.board[x][y]][1] - y)))
         return manhattan_distance
 
     def find_zero(self):
-        for i in range(len(self.board)):
-            for j in range(len(self.board[i])):
-                if self.board[i][j] == 0:
-                    return [i, j] # Keeps track of a board's zero (or empty) location
+        for x in range(len(self.board)):
+            for y in range(len(self.board[x])):
+                if self.board[x][y] == 0:
+                    return [x, y] # Keeps track of a board's zero (or empty) location
 
     def swap(self, x, y):
         copy = cp.deepcopy(self.board) # Makes a copy of the board 
