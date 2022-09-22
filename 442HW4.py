@@ -54,7 +54,7 @@ class BoardState:
             for y in range(len(self.board[x])):
                 # Finding manhattan distance can be done by summing the distance (the difference) 
                 # from the current position of a number and its goal position (x and y position)
-                manhattan_distance = manhattan_distance + (abs(goal_state[self.board[x][y]][0] - y) + (abs(goal_state[self.board[x][y]][1] - y)))
+                manhattan_distance = manhattan_distance + (abs(goal_state[self.board[x][y]][0] - x) + (abs(goal_state[self.board[x][y]][1] - y)))
         return manhattan_distance
 
     def find_zero(self):
